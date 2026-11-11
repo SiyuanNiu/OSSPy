@@ -1,0 +1,33 @@
+DATABASE C:\Program Files (x86)\USGS\Phreeqc Interactive 3.8.7-17149\database\phreeqc.dat
+SOLUTION 0  
+        units            mmol/kgw
+        temp             25.0
+        pH               7.0     charge
+        pe               12.5    O2(g)   -0.68
+        Ca               0.6
+        Cl               1.2
+SOLUTION 1-40  
+        units            mmol/kgw
+        temp             25.0
+        pH               7.0     charge
+        pe               12.5    O2(g)   -0.68
+        Na               1.0
+        K                0.2
+        N(5)             1.2
+END
+EXCHANGE 1-40
+        -equilibrate 1
+        X                0.0011
+COPY cell 1 101
+END
+SELECTED_OUTPUT
+        -file            ex11trn.sel
+        -reset           false
+        -step
+        -totals          Na Cl K Ca
+        -high_precision true
+DUMP
+    -file ex_solutions.pqi
+    -solutions 0-40
+    -exchange 1-40
+END

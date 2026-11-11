@@ -1,0 +1,32 @@
+DATABASE C:\Program Files (x86)\USGS\Phreeqc Interactive 3.8.7-17149\database\phreeqc.dat
+INCLUDE$ ex_solutions.pqi
+
+
+TRANSPORT
+    -cells           40
+    -lengths         40*0.002
+    -shifts          1
+    -time_step       720.0
+    -flow_direction  forward
+    -boundary_conditions   flux flux
+    -diffusion_coefficient 0.0e-9
+    -dispersivities  40*0.002
+    -correct_disp    true
+    -punch_cells     40
+    -punch_frequency 1
+    -print_cells     40
+    -print_frequency 20
+
+
+SELECTED_OUTPUT
+    -file trans_selected_out.sel
+    -reset false
+    -step  true
+    -totals Na Cl K Ca
+    -high_precision true
+
+DUMP
+    -file trans_solutions.pqi
+    -solutions 0-40
+    -exchange 1-40
+END

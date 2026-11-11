@@ -1,0 +1,135 @@
+DATABASE C:\Program Files\USGS\phreeqc-3.8.6-17100-x64\database\llnl(reedited)_2021_SEP_15_Tc_Th_U_Np_Am_Se_B-Li-EPRIV-PO4.dat
+SOLUTION 0
+    temp      25
+    pH        7.64 
+    pe        4
+    redox     pe
+    units     mg/l
+    density   1
+    Cl(-1)    368
+    Na        368
+   -water    1 # kg
+
+
+EQUILIBRIUM_PHASES 0
+    CO2(g)    0.9943 10
+    O2(g)     0.9943 10
+
+SOLUTION 1-10
+    temp      25
+    pH        7.64 
+    pe        4
+    redox     pe
+    units     mg/l
+    density   1
+    Cl        368
+    Na        368
+    -water    1.35 # kg
+     
+
+EQUILIBRIUM_PHASES 1-10
+    CO2(g)    -3.4 10
+
+ 
+PHASES
+UO2
+    UO2 + 3HCO3- + 0.5O2 = H+ + H2O + UO2(CO3)3-4
+    log_k     26.48
+
+
+
+RATES
+    UO2_chem
+-start
+10 IF (TOTAL_TIME  <= 864000) THEN rate = 3.5e-8
+20 IF (TOTAL_TIME > 10*86400 AND TOTAL_TIME <= 10.5*86400) THEN rate = 2.5e-8
+30 IF (TOTAL_TIME > 10.5*86400 AND TOTAL_TIME <= 11*86400) THEN rate = 1e-8
+40 IF (TOTAL_TIME > 11*86400 AND TOTAL_TIME <= 11.5*86400) THEN rate = 3e-9
+80 SAVE rate * TIME
+-end
+    UO2_diff
+-start
+ 10 A = parm(1)
+ 20 k1 = parm(2)
+ 30 k2 = parm(3)
+ 40 logK = parm(4)
+ 80 K_eq = 10^logK
+ 90 a_O2 = act("O2")
+100 a_HCO3 = act("HCO3-")
+110 a_UO2CO3 = act("UO2(CO3)3-4")
+120 a_H = act("H+")
+130 Q = (a_UO2CO3 * a_H) / (a_O2^0.5 * a_HCO3^3)
+140 term_thermo = (1 - Q/K_eq)
+150 rate =A * (k1 * a_H^0.37 * a_O2^0.31 + k2 * a_HCO3^0.35) * term_thermo
+160 SAVE rate * TIME
+-end
+    Quartz
+-start
+10 rate = 0
+20 save rate * TIME
+-end
+
+KINETICS 1-10
+UO2_chem
+    -formula  UO2  1
+    -m        0.0441
+    -m0       0.0441
+    -tol      1e-008
+UO2_diff
+    -formula  UO2  1
+    -m        0.1029
+    -m0       0.1029
+    -parms    20 3.47e-008 3.15e-010 26.48
+    -tol      1e-008
+Quartz
+    -formula  SiO2  1
+    -m        242.417
+    -m0       242.417
+    -tol      1e-008
+-steps       1
+-step_divide 20
+-runge_kutta 1
+-bad_step_max 5000
+
+TRANSPORT
+    -cells                 10
+    -shifts                1
+    -time_step             0.0029 day
+    -boundary_conditions   constant flux
+    -flow_direction        diffusion_only
+    -lengths               10*0.0045
+    -porosity              10*0.3
+    -dispersivities        10*0.002
+    -punch_cells            10
+    -punch_frequency        1
+    -multi_d               true 1e-009 
+
+COPY cell 1 101
+
+USER_PUNCH 1
+    -headings Time U_mgL U6_mgL U4_mgL 
+    -start
+10 PUNCH TOTAL_TIME/3600/24
+20 PUNCH TOT("U") * 238 * 1000
+30 PUNCH TOT("U(6)") *  238* 1000
+40 PUNCH TOT("U(4)") * 238* 1000
+    -end
+
+
+SELECTED_OUTPUT
+    -file re_selected_out.sel
+    -reset false
+    -time true
+    -totals U U(6) U(4) Na Cl H O C 
+
+
+DUMP
+    -file re_solutions.pqi
+    -solutions 1-10 
+    -equilibrium_phases 1-10
+END
+
+DUMP
+    -file kinetics.pqi
+    -kinetics 1-10
+END
