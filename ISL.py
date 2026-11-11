@@ -59,8 +59,6 @@ def get_dynamic_rate(total_time):
         return 1e-8
     elif total_time <= 11.5 * 86400:               
         return 3e-9
-    else:             
-        return 5e-11
 
 def main():
     # 检查输入文件
