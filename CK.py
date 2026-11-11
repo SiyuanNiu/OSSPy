@@ -38,8 +38,6 @@ def read_sel_file(path):
     except Exception:
         return pd.DataFrame()
 
-
-
 def main():
     for f in (EX_INPUT, TRANS_INPUT):
         if not os.path.exists(f):
@@ -85,8 +83,7 @@ def main():
                     if any(low.startswith(x) for x in ["copy", "dump", "selected_output"]):
                         skip_solution = False
                     else:
-                        continue  # 还在 solution 里，继续跳过
-
+                        continue 
                 if not inserted and low.startswith("copy"):
                     new_lines.append("INCLUDE$ trans_solutions.pqi\n")
                     inserted = True
@@ -169,7 +166,6 @@ def main():
         plt.xlabel("Pore volumes")
         plt.ylabel("mmol/kgw")
         plt.legend()
-        plt.title("Coupled EX+TRANS (Example 11)")
         plt.grid(True)
         plt.tight_layout()
         plt.show()
