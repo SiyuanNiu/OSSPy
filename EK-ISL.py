@@ -59,7 +59,7 @@ def get_dynamic_rate(total_time):
         return 3e-8
     elif total_time <= 8 * 86400:              
         return 8e-9
-    else:             
+    elif total_time <= 10 * 86400:             
         return 3e-9
 
 
